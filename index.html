@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NDIS Budget Diagnostic Tool</title>
+  <!--<link rel="preconnect" href="https://fonts.googleapis.com" />-->
+  <!--<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />-->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/dashboard.css" />
+</head>
+<body>
+
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <!--<div class="logo-mark">N</div>-->
+        <div>
+          <div class="logo-title">NDIS</div>
+          <div class="logo-sub">Budget Diagnostic</div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-eyebrow">Participant variables</div>
+
+        <!-- Age -->
+        <div class="field-group">
+          <div class="field-header">
+            <label class="field-label" for="age-slider">Age</label>
+            <span class="field-value" id="age-display">34 years</span>
+          </div>
+          <input type="range" class="slider" id="age-slider" min="5" max="85" step="1" value="34" />
+          <div class="slider-bounds"><span>5</span><span>85</span></div>
+        </div>
+
+        <!-- Time since diagnosis -->
+        <div class="field-group">
+          <div class="field-header">
+            <label class="field-label" for="diag-slider">Time since diagnosis</label>
+            <span class="field-value" id="diag-display">3 years</span>
+          </div>
+          <input type="range" class="slider" id="diag-slider" min="0" max="30" step="1" value="3" />
+          <div class="slider-bounds"><span>Recently diagnosed</span><span>30 yrs</span></div>
+        </div>
+
+        <!-- Remoteness -->
+        <div class="field-group">
+          <div class="field-header">
+            <label class="field-label">Remoteness</label>
+            <span class="field-value" id="rem-display">Inner regional</span>
+          </div>
+          <div class="remote-grid">
+            {% for label in remoteness_labels %}
+            <button
+              class="rem-btn {% if loop.index0 == 1 %}active{% endif %}"
+              data-val="{{ loop.index0 }}"
+              onclick="setRemote(this)"
+            >{{ label }}</button>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="disclaimer">
+          Coefficients are placeholders. Replace with fitted GLMM values before clinical use.
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+
+      <div class="main-header">
+        <div>
+          <h1 class="main-title">Budget expectation model</h1>
+          <!--<p class="main-sub">Predicted range based on participant profile · GLMM · Gamma response · 80% prediction interval</p>-->
+        </div>
+        <div class="status-pill" id="status-pill">Ready</div>
+      </div>
+
+      <!-- Budget range card -->
+      <div class="card range-card">
+        <div class="range-header">
+          <div>
+            <div class="card-eyebrow">Predicted annual budget range</div>
+            <div class="range-values">
+              <span class="range-num" id="low-out">$28,400</span>
+              <span class="range-dash">—</span>
+              <span class="range-num" id="high-out">$51,200</span>
+            </div>
+          </div>
+          <div class="point-estimate-box">
+            <div class="card-eyebrow">Point estimate</div>
+            <div class="point-estimate-val" id="point-out">$38,900</div>
+          </div>
+        </div>
+
+        <!-- Range bar -->
+        <div class="range-bar-wrap">
+          <div class="range-track" id="range-track">
+            <div class="range-fill" id="range-fill"></div>
+            <div class="range-marker" id="range-marker"></div>
+            <div class="range-tooltip" id="range-tooltip">$38,900</div>
+          </div>
+          <div class="range-axis">
+            <span>$0</span>
+            <span id="axis-mid">$60k</span>
+            <span id="axis-max">$120k</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metrics row -->
+      <div class="metrics-row">
+        <div class="metric-card">
+          <div class="metric-label">Interval width</div>
+          <div class="metric-value warn" id="width-out">$22,800</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Rate of Uncertainty (Spread)</div>
+          <div class="metric-value" id="disp-out">0.284</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Confidence</div>
+          <div class="metric-value good" id="conf-out">80%</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Remoteness</div>
+          <div class="metric-value" id="remote-out">Inner regional</div>
+        </div>
+      </div>
+
+      <!-- Flag -->
+      <div class="flag-box neutral" id="flag-box">
+        Profile within expected parameters. Use predicted range as a baseline for the interview conversation.
+      </div>
+
+      <!-- Contributions -->
+      <div class="card">
+        <div class="card-eyebrow" style="margin-bottom: 1.25rem;">Variable contributions</div>
+        <div id="contrib-list"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
