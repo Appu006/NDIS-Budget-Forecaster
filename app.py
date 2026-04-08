@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 import math
 
-app = Flask(__name__)
+#app = Flask(__name__)
+app = Flask(__name__, template_folder='NDIS-Budget-Forecaster/template', static_folder='NDIS-Budget-Forecaster/static')
 
 MODEL_CONFIG = {
     "baseline": 57903.28,          # Intercept: floor budget before participant characteristics
